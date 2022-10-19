@@ -33,6 +33,75 @@ message Tokens {
   optional string tokenizer_id = 2;
 }
 
+enum GaussianDirection {
+  DIRECTION_NONE = 0;
+  DIRECTION_UP = 1;
+  DIRECTION_DOWN = 2;
+}
+
+message ImageAdjustment_Gaussian {
+  float sigma = 1;
+  GaussianDirection direction = 2;
+}
+
+message ImageAdjustment_Invert{
+}
+
+message ImageAdjustment_Levels {
+  float input_low = 1;
+  float input_high = 2;
+  float output_low = 3;
+  float output_high = 4;
+}
+
+enum ChannelSource {
+  CHANNEL_R = 0;
+  CHANNEL_G = 1;
+  CHANNEL_B = 2;
+  CHANNEL_A = 3;
+  CHANNEL_ZERO = 4;
+  CHANNEL_ONE = 5;
+  CHANNEL_DISCARD = 6;
+}
+
+message ImageAdjustment_Channels {
+  optional ChannelSource r = 1;
+  optional ChannelSource g = 2;
+  optional ChannelSource b = 3;
+  optional ChannelSource a = 4;
+}
+
+enum RescaleMode {
+  RESCALE_STRICT = 0;
+  RESCALE_CROP = 2;
+  RESCALE_FIT = 3;
+}
+
+message ImageAdjustment_Rescale {
+  uint64 height = 1;
+  uint64 width = 2;
+  RescaleMode mode = 3;
+  repeated string algorithm_hint = 4;
+}
+
+message ImageAdjustment_Crop {
+  uint64 top = 1;
+  uint64 left = 2;
+  uint64 width = 3;
+  uint64 height = 4;
+}
+
+message ImageAdjustment {
+  oneof adjustment {
+    ImageAdjustment_Gaussian blur = 1;
+    ImageAdjustment_Invert invert = 2;
+    ImageAdjustment_Levels levels = 3;
+    ImageAdjustment_Channels channels = 4;
+    ImageAdjustment_Rescale rescale = 5;
+    ImageAdjustment_Crop crop = 6;
+  }
+}
+
 // A tangible Artifact, such as an image, video, or text that is used for input
 // or output.
 message Artifact {
@@ -49,6 +118,9 @@ message Artifact {
   uint32 index = 8;               // Index of this artifact in input/output list
   FinishReason finish_reason = 9; // Reason for finishing, if applicable
   uint32 seed = 10;               // Seed used to generate this artifact
+
+  repeated ImageAdjustment adjustments = 500; // Adjustments to this image / mask before generation
+  repeated ImageAdjustment postAdjustments = 501; // Adjustments to this image / mask after generation
 }
 
 // A set of parameters for each individual Prompt.
@@ -192,6 +264,19 @@ message TransformType {
   }
 }
 
+message ExtendedParameter {
+  string name = 1;
+  oneof value {
+    float float = 2;
+    uint64 int = 3;
+    string str = 4;
+  }
+}
+
+message ExtendedParameters {
+  repeated ExtendedParameter parameters = 1;
+}
+
 message ImageParameters {
   optional uint64 height = 1;
   optional uint64 width = 2;
@@ -200,6 +285,8 @@ message ImageParameters {
   optional uint64 steps = 5;
   optional TransformType transform = 6;
   repeated StepParameter parameters = 7;
+
+  optional ExtendedParameters extension = 500;
 }
 
 enum Action {
