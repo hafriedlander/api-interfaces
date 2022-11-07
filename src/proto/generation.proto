@@ -163,6 +163,10 @@ enum DiffusionSampler {
   SAMPLER_K_DPM_2 = 5;
   SAMPLER_K_DPM_2_ANCESTRAL = 6;
   SAMPLER_K_LMS = 7;
+
+  SAMPLER_DPMSOLVERPP_1ORDER = 500;
+  SAMPLER_DPMSOLVERPP_2ORDER = 501;
+  SAMPLER_DPMSOLVERPP_3ORDER = 502;
 }
 
 // Parameters that affect the behavior of the sampler, typically used for CFG.
