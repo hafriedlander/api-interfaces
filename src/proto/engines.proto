@@ -1,6 +1,7 @@
 syntax = 'proto3';
 package gooseai;
 option go_package = "./;engines";
+import "generation.proto";
 
 // Possible engine type
 enum EngineType {
@@ -17,6 +18,17 @@ enum EngineTokenizer {
   PILE = 1;
 }
 
+message EngineSampler {
+  DiffusionSampler sampler = 1;
+  
+  bool supports_eta = 10;
+  bool supports_churn = 11;
+  bool supports_sigma_limits = 12;
+  bool supports_karras_rho = 13;
+
+  repeated SamplerNoiseType supported_noise_types = 20;
+}
+
 // Engine info struct
 message EngineInfo {
   string id = 1;
@@ -26,6 +38,8 @@ message EngineInfo {
   EngineTokenizer tokenizer = 5;
   string name = 6;
   string description = 7;
+
+  repeated EngineSampler supported_samplers = 500;
 }
 
 message ListEnginesRequest {
