@@ -316,6 +316,12 @@ message ExtendedParameters {
   repeated ExtendedParameter parameters = 1;
 }
 
+// Parameters that control the hires fix feature
+message HiresFixParameters {
+  bool enable = 1;                 // Should it be enabled at all
+  optional float oos_fraction = 2; // How out-of-square will we allow the fixed area to be, 0...1
+}
+
 message ImageParameters {
   optional uint64 height = 1;
   optional uint64 width = 2;
@@ -326,6 +332,7 @@ message ImageParameters {
   repeated StepParameter parameters = 7;
 
   optional ExtendedParameters extension = 500;
+  optional HiresFixParameters hires = 510;
 }
 
 enum Action {
