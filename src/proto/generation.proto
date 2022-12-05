@@ -333,6 +333,7 @@ message ImageParameters {
 
   optional ExtendedParameters extension = 500;
   optional HiresFixParameters hires = 510;
+  optional bool tiling = 520;
 }
 
 enum Action {
