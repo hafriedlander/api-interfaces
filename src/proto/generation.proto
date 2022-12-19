@@ -22,6 +22,7 @@ enum ArtifactType {
   ARTIFACT_MASK = 7;
   ARTIFACT_LATENT = 8;
   ARTIFACT_TENSOR = 9;
+  ARTIFACT_LORA = 500;
 }
 
 // Generally, a GPT BPE 16-bit token, paired with an optional string representation.
@@ -105,6 +106,16 @@ message ImageAdjustment {
   }
 }
 
+enum LoraTarget {
+  LORA_UNET = 0;
+  LORA_TEXT_ENCODER = 1;
+}
+
+message Lora {
+  LoraTarget target = 1;
+  repeated tensors.Tensor tensors = 2;
+}
+
 // A tangible Artifact, such as an image, video, or text that is used for input
 // or output.
 message Artifact {
@@ -120,6 +131,7 @@ message Artifact {
     tensors.Tensor tensor = 14;   // torch.Tensor:
                                   //    RGB tensor (C,H,W)
                                   //    VAE latent (C,H//8,W//8, assuming VAE-f8)
+    Lora lora = 510;              // A Lora embedding
   }
   uint32 index = 8;               // Index of this artifact in input/output list
   FinishReason finish_reason = 9; // Reason for finishing, if applicable
