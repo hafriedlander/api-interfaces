@@ -155,6 +155,7 @@ message PromptParameters {
 //   - Text (singular)
 //   - Init Image (singular, optional, type ARTIFACT_IMAGE, with init=true)
 //   - Mask (singular, optional, Artifact type ARTIFACT_MASK)
+// .
 message Prompt {
   optional PromptParameters parameters = 1;
   oneof prompt {
@@ -231,7 +232,7 @@ enum Upscaler {
   UPSCALER_ESRGAN = 2;
 }
 
-// When does this schedule definition apply?
+// When does this schedule definition apply?.
 message ScheduleParameters {
   optional float start = 1;     // 0.0 to 1.0
   optional float end = 2;       // 0.0 to 1.0
@@ -328,7 +329,7 @@ message ExtendedParameters {
   repeated ExtendedParameter parameters = 1;
 }
 
-// Parameters that control the hires fix feature
+// Parameters that control the hires fix feature.
 message HiresFixParameters {
   bool enable = 1;                 // Should it be enabled at all
   optional float oos_fraction = 2; // How out-of-square will we allow the fixed area to be, 0...1
@@ -361,6 +362,7 @@ enum Action {
 // Artifact classification parameters.
 //
 
+// Classifier Mode.
 enum ClassifierMode {
   CLSFR_MODE_ZEROSHOT = 0;
   CLSFR_MODE_MULTICLASS = 1;
@@ -477,10 +479,26 @@ message ChainRequest {
   repeated Stage stage = 2;
 }
 
+message AsyncAnswer {
+  repeated Answer answer = 1;
+  bool complete = 2;
+}
+
+message AsyncHandle {
+  string request_id = 1;
+  string async_handle = 2;
+}
+
+message Nothing {
+}
+
 //
 // gRPC services
 //
 service GenerationService {
   rpc Generate (Request) returns (stream Answer) {};
   rpc ChainGenerate (ChainRequest) returns (stream Answer) {};
+  rpc AsyncGenerate (Request) returns (AsyncHandle) {};
+  rpc AsyncResult (AsyncHandle) returns (AsyncAnswer) {};
+  rpc AsyncCancel (AsyncHandle) returns (Nothing) {};
 }
