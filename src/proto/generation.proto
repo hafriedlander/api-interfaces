@@ -479,17 +479,35 @@ message ChainRequest {
   repeated Stage stage = 2;
 }
 
-message AsyncAnswer {
-  repeated Answer answer = 1;
-  bool complete = 2;
+// The status of an async job. 
+// Mirrors google.rpc.Status but avoids needing to include that file in the repo.
+message AsyncStatus {
+  // The status code, which should be an enum value of google.rpc.Code
+  int32 code = 1;
+  // Any message
+  string message = 2;
 }
 
+// A potentially partial answer to an AsyncGenerate request, returned by AsyncResult.
+message AsyncAnswer {
+  // Any completed Answers that have not been returned by a previous call to AsyncResult.
+  repeated Answer answer = 1;
+  // Is this AsyncGenerate request complete? 
+  // (Once true, any further requests will give an error).
+  bool complete = 2;
+  // Final status. Only set when complete == True.
+  AsyncStatus status = 3;
+}
+
+// A handle to refer to a AsyncGenerate request.
 message AsyncHandle {
+  // The request_id for the original Request.
   string request_id = 1;
+  // The opaque handle needed to refer to the same AsyncGenerate request.
   string async_handle = 2;
 }
 
-message Nothing {
+message AsyncCancelAnswer {
 }
 
 //
@@ -498,7 +516,25 @@ message Nothing {
 service GenerationService {
   rpc Generate (Request) returns (stream Answer) {};
   rpc ChainGenerate (ChainRequest) returns (stream Answer) {};
+
+  /*AsyncGenerate starts an asynchronous generation
+
+  The passed Request is the same as to Generate. However this method
+  will return immediately, returning a handle that can be used to get
+  any results of the generation created so far or cancel it.*/
   rpc AsyncGenerate (Request) returns (AsyncHandle) {};
+
+  /*AsyncResult gets and results so far for an asynchronous generation
+  
+  You can call this multiple times. Each time you call it, you will get
+  any results that are ready that have not been returned before.
+  (Note that this "consumes" the ready results - they will not be returned again).
+  
+  Any generated results will eventually (default: after 10 minutes) be discarded
+  if they are not taken by a call to this method.*/
   rpc AsyncResult (AsyncHandle) returns (AsyncAnswer) {};
-  rpc AsyncCancel (AsyncHandle) returns (Nothing) {};
+
+  /*AsyncCancel cancels a generation that is currently in progress
+  and discards any results that have not yet been returned by a call to AsyncResult.*/
+  rpc AsyncCancel (AsyncHandle) returns (AsyncCancelAnswer) {};
 }
