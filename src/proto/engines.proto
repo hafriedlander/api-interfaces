@@ -1,6 +1,7 @@
 syntax = 'proto3';
 package gooseai;
 option go_package = "github.com/stability-ai/api-interfaces/gooseai/engines";
+import "generation.proto";
 
 // Possible engine type
 enum EngineType {
