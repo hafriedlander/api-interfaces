@@ -23,6 +23,7 @@ enum ArtifactType {
   ARTIFACT_LATENT = 8;
   ARTIFACT_TENSOR = 9;
   ARTIFACT_LORA = 500;
+  ARTIFACT_DEPTH = 501;
 }
 
 // Generally, a GPT BPE 16-bit token, paired with an optional string representation.
@@ -77,8 +78,14 @@ message ImageAdjustment_Channels {
 
 enum RescaleMode {
   RESCALE_STRICT = 0;
-  RESCALE_CROP = 2;
-  RESCALE_FIT = 3;
+  // Completely cover the rescale height and width, maintaining aspect ratio, cropping any extra
+  RESCALE_COVER = 2;
+  // Fit the complete source image into the rescale height and width, maintaining aspect ratio, background to be filled with zeros
+  RESCALE_CONTAIN_ZERO = 3;
+  // Fit the complete source image into the rescale height and width, maintaining aspect ratio, background to be filled with the edge of the image repeating
+  RESCALE_CONTAIN_REPLICATE = 4;
+  // Fit the complete source image into the rescale height and width, maintaining aspect ratio, background to be filled with the image mirrored
+  RESCALE_CONTAIN_REFLECT = 5;
 }
 
 message ImageAdjustment_Rescale {
@@ -95,6 +102,12 @@ message ImageAdjustment_Crop {
   uint64 height = 4;
 }
 
+message ImageAdjustment_Depth {
+  // You can provide a list of depth engine ID preferences, first match will be used,
+  // or default engine if no match
+  repeated string depth_engine_hint = 1; 
+}
+
 message ImageAdjustment {
   oneof adjustment {
     ImageAdjustment_Gaussian blur = 1;
@@ -103,6 +116,7 @@ message ImageAdjustment {
     ImageAdjustment_Channels channels = 4;
     ImageAdjustment_Rescale rescale = 5;
     ImageAdjustment_Crop crop = 6;
+    ImageAdjustment_Depth depth = 7;
   }
 }
 
@@ -131,6 +145,20 @@ message Lora {
   repeated LoraWeight weights = 2;
 }
 
+enum ArtifactStage {
+  ARTIFACT_BEFORE_ADJUSTMENTS = 0;
+  ARTIFACT_AFTER_ADJUSTMENTS = 1;
+  ARTIFACT_AFTER_POSTADJUSTMENTS = 2;
+}
+
+message ArtifactReference {
+  oneof reference {
+    uint64 id = 1;
+    string uuid = 2;
+  }
+  ArtifactStage stage = 3;
+}
+
 // A tangible Artifact, such as an image, video, or text that is used for input
 // or output.
 message Artifact {
@@ -147,6 +175,7 @@ message Artifact {
                                   //    RGB tensor (C,H,W)
                                   //    VAE latent (C,H//8,W//8, assuming VAE-f8)
     Lora lora = 510;              // A Lora embedding
+    ArtifactReference ref = 511;  // A reference to a previous Artifact
   }
   uint32 index = 8;               // Index of this artifact in input/output list
   FinishReason finish_reason = 9; // Reason for finishing, if applicable
