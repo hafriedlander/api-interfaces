@@ -40,6 +40,7 @@ message EngineInfo {
   string description = 7;
 
   repeated EngineSampler supported_samplers = 500;
+  repeated ArtifactType accepted_prompt_artifacts = 501;
 }
 
 message ListEnginesRequest {
