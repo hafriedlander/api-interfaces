@@ -24,6 +24,7 @@ enum ArtifactType {
   ARTIFACT_TENSOR = 9;
   ARTIFACT_LORA = 500;
   ARTIFACT_DEPTH = 501;
+  ARTIFACT_TOKEN_EMBEDDING = 502;
 }
 
 // Generally, a GPT BPE 16-bit token, paired with an optional string representation.
@@ -159,6 +160,11 @@ message ArtifactReference {
   ArtifactStage stage = 3;
 }
 
+message TokenEmbedding {
+  string text = 1;
+  tensors.Tensor tensor = 2;
+}
+
 // A tangible Artifact, such as an image, video, or text that is used for input
 // or output.
 message Artifact {
@@ -176,6 +182,7 @@ message Artifact {
                                   //    VAE latent (C,H//8,W//8, assuming VAE-f8)
     Lora lora = 510;              // A Lora embedding
     ArtifactReference ref = 511;  // A reference to a previous Artifact
+    TokenEmbedding token_embedding = 512; // A textual inversion embedding or similar
   }
   uint32 index = 8;               // Index of this artifact in input/output list
   FinishReason finish_reason = 9; // Reason for finishing, if applicable
