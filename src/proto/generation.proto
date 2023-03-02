@@ -23,8 +23,9 @@ enum ArtifactType {
   ARTIFACT_LATENT = 8;
   ARTIFACT_TENSOR = 9;
   ARTIFACT_LORA = 500;
-  ARTIFACT_DEPTH = 501;
+  ARTIFACT_DEPTH = 501; // Deprecated - use IMAGE with an image control type of "depth" instead
   ARTIFACT_TOKEN_EMBEDDING = 502;
+  ARTIFACT_HINT_IMAGE = 503; // Controlnet or T2I input image
 }
 
 // Generally, a GPT BPE 16-bit token, paired with an optional string representation.
@@ -192,6 +193,9 @@ message Artifact {
 
   repeated ImageAdjustment adjustments = 500; // Adjustments to this image / mask before generation
   repeated ImageAdjustment postAdjustments = 501; // Adjustments to this image / mask after generation
+
+  optional string hint_image_type = 520; // Indicate the sort of control for image types
+  // Examples are "depth", "sketch", "normal", "segmentation_coco", "segmentation_ade20k", "pose_openpose", etc
 }
 
 enum MaskedAreaInit {
