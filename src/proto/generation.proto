@@ -110,6 +110,11 @@ message ImageAdjustment_Depth {
   repeated string depth_engine_hint = 1; 
 }
 
+message ImageAdjustment_CannyEdge {
+  float low_threshold = 1;
+  float high_threshold = 2;
+}
+
 message ImageAdjustment {
   oneof adjustment {
     ImageAdjustment_Gaussian blur = 1;
@@ -119,6 +124,7 @@ message ImageAdjustment {
     ImageAdjustment_Rescale rescale = 5;
     ImageAdjustment_Crop crop = 6;
     ImageAdjustment_Depth depth = 7;
+    ImageAdjustment_CannyEdge canny_edge = 8;
   }
 }
 
