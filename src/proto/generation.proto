@@ -177,23 +177,24 @@ message CacheControl {
 message Artifact {
   uint64 id = 1;
   ArtifactType type = 2;
-  string mime = 3;                // MIME type identifier, e.g. "image/png"
-  optional string magic = 4;      // Magic number, e.g. "PNG"
+  string mime = 3;                 // MIME type identifier, e.g. "image/png"
+  optional string magic = 4;       // Magic number, e.g. "PNG"
   oneof data {
-    bytes binary = 5;             // Binary data, e.g. PNG image
-    string text = 6;              // Text data, e.g. text prompt
-    Tokens tokens = 7;            // Tokenized text data, e.g. GPT tokens
+    bytes binary = 5;              // Binary data, e.g. PNG image
+    string text = 6;               // Text data, e.g. text prompt
+    Tokens tokens = 7;             // Tokenized text data, e.g. GPT tokens
     ClassifierParameters classifier = 11;
-    tensors.Tensor tensor = 14;   // torch.Tensor:
-                                  //    RGB tensor (C,H,W)
-                                  //    VAE latent (C,H//8,W//8, assuming VAE-f8)
-    Lora lora = 510;              // A Lora embedding
-    ArtifactReference ref = 511;  // A reference to a previous Artifact
-    TokenEmbedding token_embedding = 512; // A textual inversion embedding or similar
-    string url = 513;             // A url (which must be allowed by the server)
+    tensors.Tensor tensor = 14;    // torch.Tensor:
+                                   //    RGB tensor (C,H,W)
+                                   //    VAE latent (C,H//8,W//8, assuming VAE-f8)
+    ArtifactReference ref = 511;   // A reference to a previous Artifact
+    string url = 513;              // A url (which must be allowed by the server)
+    Safetensors safetensors = 514; // A safetensors format set of tensors and metadata
 
-    string cache_id = 550;        // An ID to load from cache (previously set with cache_info)
-                                  // Cache miss will return an error (FAILED_PRECONDITION for GRPC, 412 Precondition Failed for HTTP)
+    string cache_id = 550;         // An ID to load from cache (previously set with cache_info)
+
+    Lora lora = 510 [deprecated = true] ; // A Lora embedding - deprecated, use safetensors + named_weighs
+    TokenEmbedding token_embedding = 512 [deprecated = true]; // A textual inversion embedding or similar - deprecated, use safetensors + token_overrides
   }
   uint32 index = 8;               // Index of this artifact in input/output list
   FinishReason finish_reason = 9; // Reason for finishing, if applicable
@@ -226,12 +227,18 @@ message NamedWeight {
   float weight = 2;
 }
 
+message TokenOverride {
+  string token = 1;
+  optional string original_token = 2;
+}
+
 // A set of parameters for each individual Prompt.
 message PromptParameters {
   optional bool init = 1;
   optional float weight = 2;
 
   repeated NamedWeight named_weights = 500;
+  repeated TokenOverride token_overrides = 501;
 }
 
 // A Prompt is a special type of Artifact that is used to generate an output.
