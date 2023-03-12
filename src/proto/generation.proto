@@ -115,6 +115,12 @@ message ImageAdjustment_CannyEdge {
   float high_threshold = 2;
 }
 
+message ImageAdjustment_EdgeDetection {
+}
+
+message ImageAdjustment_Segmentation {
+}
+
 message ImageAdjustment {
   oneof adjustment {
     ImageAdjustment_Gaussian blur = 1;
@@ -125,6 +131,8 @@ message ImageAdjustment {
     ImageAdjustment_Crop crop = 6;
     ImageAdjustment_Depth depth = 7;
     ImageAdjustment_CannyEdge canny_edge = 8;
+    ImageAdjustment_EdgeDetection edge_detection = 9;
+    ImageAdjustment_Segmentation segmentation = 10;
   }
 }
 
@@ -261,6 +269,7 @@ message Prompt {
     Tokens tokens = 3;
     Artifact artifact = 4;
   }
+  bool include_in_answer = 500;
 }
 
 // DiffusionSampler identifies which sampler to use for Diffusion, and represents
