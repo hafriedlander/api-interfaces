@@ -269,7 +269,7 @@ message Prompt {
     Tokens tokens = 3;
     Artifact artifact = 4;
   }
-  bool include_in_answer = 500;
+  bool echo_back = 500;
 }
 
 // DiffusionSampler identifies which sampler to use for Diffusion, and represents
