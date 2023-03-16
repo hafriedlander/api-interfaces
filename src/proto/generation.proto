@@ -121,6 +121,12 @@ message ImageAdjustment_EdgeDetection {
 message ImageAdjustment_Segmentation {
 }
 
+message ImageAdjustment_Keypose {
+}
+
+message ImageAdjustment_Openpose {
+}
+
 message ImageAdjustment {
   oneof adjustment {
     ImageAdjustment_Gaussian blur = 1;
@@ -133,6 +139,8 @@ message ImageAdjustment {
     ImageAdjustment_CannyEdge canny_edge = 8;
     ImageAdjustment_EdgeDetection edge_detection = 9;
     ImageAdjustment_Segmentation segmentation = 10;
+    ImageAdjustment_Keypose keypose = 11;
+    ImageAdjustment_Openpose openpose = 12;
   }
 }
 
