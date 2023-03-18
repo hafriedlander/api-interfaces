@@ -134,6 +134,16 @@ message ImageAdjustment_Normal {
   optional float smoothing = 4; // Normal range 0..1. The higher the smoother. Recoomened: 0.8
 }
 
+enum BackgroundRemovalMode {
+  ALPHA = 0; // Apply to alpha channel
+  SOLID = 1; // Matte over a solid color
+  BLUR = 2; // Matte over a blurred version of the input
+}
+
+message ImageAdjustment_BackgroundRemoval {
+  optional BackgroundRemovalMode mode = 1;
+}
+
 message ImageAdjustment {
   oneof adjustment {
     ImageAdjustment_Gaussian blur = 1;
@@ -149,6 +159,7 @@ message ImageAdjustment {
     ImageAdjustment_Keypose keypose = 11;
     ImageAdjustment_Openpose openpose = 12;
     ImageAdjustment_Normal normal = 13;
+    ImageAdjustment_BackgroundRemoval background_removal = 14;
   }
 }
 
