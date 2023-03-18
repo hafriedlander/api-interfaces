@@ -127,6 +127,13 @@ message ImageAdjustment_Keypose {
 message ImageAdjustment_Openpose {
 }
 
+message ImageAdjustment_Normal {
+  optional float background_threshold = 1; // 0 .. 1, the higher the more background is removed
+  optional uint32 preblur = 2; // Must be an odd integer if supplied. How much to blur depth map before calculating normal map: Recommended: 0
+  optional uint32 postblur = 3; // Must be an odd integer if supplied. How much to blur normal map. Recommended: 5
+  optional float smoothing = 4; // Normal range 0..1. The higher the smoother. Recoomened: 0.8
+}
+
 message ImageAdjustment {
   oneof adjustment {
     ImageAdjustment_Gaussian blur = 1;
@@ -141,6 +148,7 @@ message ImageAdjustment {
     ImageAdjustment_Segmentation segmentation = 10;
     ImageAdjustment_Keypose keypose = 11;
     ImageAdjustment_Openpose openpose = 12;
+    ImageAdjustment_Normal normal = 13;
   }
 }
 
