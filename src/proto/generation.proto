@@ -280,6 +280,7 @@ message PromptParameters {
 
   repeated NamedWeight named_weights = 500;
   repeated TokenOverride token_overrides = 501;
+  optional uint32 clip_layer = 502; // 0 _or_ 1 == final, 2 = penultimate, 3 = next
 }
 
 // A Prompt is a special type of Artifact that is used to generate an output.
