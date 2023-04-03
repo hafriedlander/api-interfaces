@@ -41,9 +41,18 @@ message EngineInfo {
 
   repeated EngineSampler supported_samplers = 500;
   repeated ArtifactType accepted_prompt_artifacts = 501;
+  string task = 510;
+}
+
+enum EngineTaskGroup {
+  GENERATE=0;
+  UPSCALE=1;
+  UTILITY=2;
+  HINTER=3;
 }
 
 message ListEnginesRequest {
+  EngineTaskGroup task_group = 500;
   // Empty
 }
 
