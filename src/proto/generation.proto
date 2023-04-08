@@ -90,12 +90,23 @@ enum RescaleMode {
   RESCALE_CONTAIN_REFLECT = 5;
 }
 
+// Resize the image. The mode specifies what will happen if the aspect ratio
 message ImageAdjustment_Rescale {
   uint64 height = 1;
   uint64 width = 2;
   RescaleMode mode = 3;
-  repeated string algorithm_hint = 4;
+  repeated string algorithm_hint = 4 [deprecated = true];
 }
+
+// Resize the image in a more clever way. 
+// If either width or height are missing, will calculate the right value to maintain aspect ratio
+// If both are missing, will use the target size of the generation
+message ImageAdjustment_Autoscale {
+  optional uint64 height = 1;
+  optional uint64 width = 2;
+  RescaleMode mode = 3;
+}
+
 
 message ImageAdjustment_Crop {
   uint64 top = 1;
@@ -160,6 +171,7 @@ message ImageAdjustment {
     ImageAdjustment_Openpose openpose = 12;
     ImageAdjustment_Normal normal = 13;
     ImageAdjustment_BackgroundRemoval background_removal = 14;
+    ImageAdjustment_Autoscale autoscale = 15;
   }
 }
 
@@ -243,8 +255,11 @@ message Artifact {
   string uuid = 12;               // UUIDv4 of the artifact, used for asset lookup
   uint64 size = 13;               // Size of the artifact in bytes
 
-  repeated ImageAdjustment adjustments = 500; // Adjustments to this image / mask before generation
-  repeated ImageAdjustment postAdjustments = 501; // Adjustments to this image / mask after generation
+  // Adjustments to this image / mask before generation
+  repeated ImageAdjustment adjustments = 500; 
+  // Adjustments to this image / mask after generation 
+  // (primarily for adjusting mask prior to re-applying image in outpaint)
+  repeated ImageAdjustment postAdjustments = 501; 
 
   optional string hint_image_type = 520; // Indicate the sort of control for image types
   // Examples are "depth", "sketch", "normal", "segmentation_coco", "segmentation_ade20k", "pose_openpose", etc
