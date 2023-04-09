@@ -155,6 +155,10 @@ message ImageAdjustment_BackgroundRemoval {
   optional BackgroundRemovalMode mode = 1;
 }
 
+message ImageAdjustment_Palletize {
+  optional uint32 colours = 1; // Number of colours in one dimension (so total colours = colours * colours)
+}
+
 message ImageAdjustment {
   oneof adjustment {
     ImageAdjustment_Gaussian blur = 1;
@@ -172,6 +176,7 @@ message ImageAdjustment {
     ImageAdjustment_Normal normal = 13;
     ImageAdjustment_BackgroundRemoval background_removal = 14;
     ImageAdjustment_Autoscale autoscale = 15;
+    ImageAdjustment_Palletize palletize = 16;
   }
 
   optional string engine_id = 200;
