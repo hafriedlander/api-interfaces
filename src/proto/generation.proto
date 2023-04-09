@@ -173,6 +173,8 @@ message ImageAdjustment {
     ImageAdjustment_BackgroundRemoval background_removal = 14;
     ImageAdjustment_Autoscale autoscale = 15;
   }
+
+  optional string engine_id = 200;
 }
 
 message SafetensorsMeta {
