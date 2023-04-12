@@ -23,7 +23,7 @@ enum ArtifactType {
   ARTIFACT_LATENT = 8;
   ARTIFACT_TENSOR = 9;
   ARTIFACT_LORA = 500;
-  ARTIFACT_DEPTH = 501; // Deprecated - use IMAGE with an image control type of "depth" instead
+  ARTIFACT_DEPTH = 501; // Deprecated - use HINT_IMAGE with an image control type of "depth" instead
   ARTIFACT_TOKEN_EMBEDDING = 502;
   ARTIFACT_HINT_IMAGE = 503; // Controlnet or T2I input image
 }
@@ -617,6 +617,9 @@ message Request {
   }
   optional ConditionerParameters conditioner = 6;
   reserved 9,10; //9, 10 are reserved
+
+  // The accept header, in the same format as for http requests. Not guaranteed to be obeyed by server.
+  string accept = 500;
 }
 
 //
