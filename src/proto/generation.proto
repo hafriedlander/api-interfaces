@@ -139,7 +139,9 @@ message ImageAdjustment_Openpose {
 }
 
 message ImageAdjustment_Normal {
-  optional float background_threshold = 1; // 0 .. 1, the higher the more background is removed
+  optional float background_threshold = 1; // 0 .. 1, the higher the more background is removed. -1 == automatic
+
+  // These next three only have any affect when using a depth engine (and then estimating a normal from that)
   optional uint32 preblur = 2; // Must be an odd integer if supplied. How much to blur depth map before calculating normal map: Recommended: 0
   optional uint32 postblur = 3; // Must be an odd integer if supplied. How much to blur normal map. Recommended: 5
   optional float smoothing = 4; // Normal range 0..1. The higher the smoother. Recoomened: 0.8
@@ -157,6 +159,16 @@ message ImageAdjustment_BackgroundRemoval {
 
 message ImageAdjustment_Palletize {
   optional uint32 colours = 1; // Number of colours in one dimension (so total colours = colours * colours)
+}
+
+// Quantize the image
+message ImageAdjustment_Quantize {
+  // 0..1 linearly divided into len(threshold)+1 points, then numbers rounded to those
+  // points based on thresholds
+  repeated float threshold = 1; 
+}
+
+message ImageAdjustment_Shuffle {
 }
 
 message ImageAdjustment {
@@ -177,6 +189,8 @@ message ImageAdjustment {
     ImageAdjustment_BackgroundRemoval background_removal = 14;
     ImageAdjustment_Autoscale autoscale = 15;
     ImageAdjustment_Palletize palletize = 16;
+    ImageAdjustment_Quantize quantize = 17;
+    ImageAdjustment_Shuffle shuffle = 18;
   }
 
   optional string engine_id = 200;
