@@ -148,13 +148,15 @@ message ImageAdjustment_Normal {
 }
 
 enum BackgroundRemovalMode {
-  ALPHA = 0; // Apply to alpha channel
-  SOLID = 1; // Matte over a solid color
-  BLUR = 2; // Matte over a blurred version of the input
+  ALPHA = 0;    // Apply to alpha channel
+  SOLID = 1;    // Matte over a solid color
+  BLUR = 2;     // Matte over a blurred version of the input
+  NOTHING = 3;  // Don't do anything, just remember it for later
 }
 
 message ImageAdjustment_BackgroundRemoval {
   optional BackgroundRemovalMode mode = 1;
+  bool reapply = 2; // Don't recalculate, reapply the most recently calculated background within this adjustment list
 }
 
 message ImageAdjustment_Palletize {
