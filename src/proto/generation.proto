@@ -311,14 +311,25 @@ message TokenOverride {
   optional string original_token = 2;
 }
 
+enum HintPriority {
+  HINT_BALANCED = 0;
+  HINT_PRIORITISE_PROMPT = 1;
+  HINT_PRIORITISE_HINT = 2;
+}
+
 // A set of parameters for each individual Prompt.
 message PromptParameters {
   optional bool init = 1;
   optional float weight = 2;
 
+  // For Lora / Lycoris, apply weights to different parts of the pipeline. Supported named: unet, text_encoder
   repeated NamedWeight named_weights = 500;
+  // Override the token string inside a token_embedding
   repeated TokenOverride token_overrides = 501;
+  // Specify the clip layer to use for text prompts and t2i/style hints
   optional uint32 clip_layer = 502; // 0 _or_ 1 == final, 2 = penultimate, 3 = next
+  // Soecify the application mode for hints
+  optional HintPriority hint_priority = 503;
 }
 
 // A Prompt is a special type of Artifact that is used to generate an output.
