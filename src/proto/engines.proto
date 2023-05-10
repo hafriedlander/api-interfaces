@@ -29,6 +29,11 @@ message EngineSampler {
   repeated SamplerNoiseType supported_noise_types = 20;
 }
 
+message EngineHintImageType {
+  string type = 1;
+  repeated string provider = 2;
+}
+
 // Engine info struct
 message EngineInfo {
   string id = 1;
@@ -41,6 +46,8 @@ message EngineInfo {
 
   repeated EngineSampler supported_samplers = 500;
   repeated ArtifactType accepted_prompt_artifacts = 501;
+  repeated EngineHintImageType accepted_hint_types = 502;
+
   string task = 510;
 }
 
