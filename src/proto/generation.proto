@@ -315,6 +315,7 @@ enum HintPriority {
   HINT_BALANCED = 0;
   HINT_PRIORITISE_PROMPT = 1;
   HINT_PRIORITISE_HINT = 2;
+  HINT_ADAPTIVE = 3;
 }
 
 // A set of parameters for each individual Prompt.
