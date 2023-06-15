@@ -173,6 +173,38 @@ message ImageAdjustment_Quantize {
 message ImageAdjustment_Shuffle {
 }
 
+enum MaskPredictBehaviour {
+  MASK_AS_ALPHA = 0;    // Apply to alpha channel
+  MASK_OVER_SOLID = 1;  // Matte over a solid color
+  MASK_OVER_BLUR = 2;   // Matte over a blurred version of the input
+  MASK_DO_NOTHING = 3;  // Don't do anything, just remember it for later
+  MASK_USE = 4;         // Result is mask
+}
+
+enum MaskPredictMode {
+  PREDICT_MATTE = 0;     // An "as accurate as possible" matte
+  PREDICT_MASK = 1;      // An "as accurate as possible" binary mask
+  PREDICT_OVERMASK = 2;  // A binary mask that covers at least the object, maybe a little more
+  PREDICT_UNDERMASK = 3; // A binary mask that covers at most the object, maybe a little less
+  PREDICT_TRIMAP = 4;    // A trimap
+}
+
+// Predict a mask. Support for all these arguments (except behaviour) depends on the engine used
+message ImageAdjustment_MaskPredict {
+  MaskPredictBehaviour behaviour = 1;
+  MaskPredictMode mode = 2;
+
+  repeated Prompt prompt = 10;
+  
+  optional uint64 erode = 50; // How much to erode mask to generate undermask
+  optional uint64 dilate = 51; // How much to dilate mask to generate overmask  
+}
+
+// Reuse the most recently predicted mask
+message ImageAdjustment_MaskReuse {
+  MaskPredictBehaviour behaviour = 1;
+}
+
 message ImageAdjustment {
   oneof adjustment {
     ImageAdjustment_Gaussian blur = 1;
@@ -193,6 +225,8 @@ message ImageAdjustment {
     ImageAdjustment_Palletize palletize = 16;
     ImageAdjustment_Quantize quantize = 17;
     ImageAdjustment_Shuffle shuffle = 18;
+    ImageAdjustment_MaskPredict mask_predict = 19;
+    ImageAdjustment_MaskReuse mask_reuse = 20;
   }
 
   optional string engine_id = 200;
@@ -318,6 +352,31 @@ enum HintPriority {
   HINT_ADAPTIVE = 3;
 }
 
+enum LOIPointLabel {
+  POINT_BACKGROUND = 0;
+  POINT_FOREGROUND = 1;
+}
+
+// Locations of Interest - a prompt type that indicates regions or points
+
+message LOIPoint {
+  uint64 x = 1;
+  uint64 y = 2;
+  optional LOIPointLabel label = 3;
+}
+
+message LOIRectangle {
+  uint64 top = 1;
+  uint64 left = 2;
+  uint64 bottom = 3;
+  uint64 right = 4;
+}
+
+message LocationsOfInterest {
+  repeated LOIPoint points = 1;
+  repeated LOIRectangle rectangles = 2;
+}
+
 // A set of parameters for each individual Prompt.
 message PromptParameters {
   optional bool init = 1;
@@ -346,9 +405,11 @@ message Prompt {
     string text = 2;
     Tokens tokens = 3;
     Artifact artifact = 4;
+    LocationsOfInterest loi = 501;
   }
   bool echo_back = 500;
 }
+
 
 // DiffusionSampler identifies which sampler to use for Diffusion, and represents
 // the internal set of supported samplers.
